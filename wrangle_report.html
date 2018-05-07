@@ -11794,7 +11794,11 @@ div#notebook {
 <li>Some tweets have more than one value for the dog stages.</li>
 <li>In columns <code>retweeted_status_id</code>, <code>retweeted_status_user_id</code>, and <code>retweeted_status_timestamp</code> there are 181 not-null values (numbers like 8.860537e+17). In other words, not all are dog ratings and some are retweets.</li>
 <li>In the column <code>expanded_urls</code> there are 59 null values.</li>
-<li>Column <code>timestamp</code> as object instead of datetime.</li>
+<li>Issues with fractional rating numerators: tweet_is's 883482846933004288 and 681340665377193984.</li>
+<li>Wrong rating for <code>tweet_id</code> 716439118184652801: 50/50 instead of 11/10.</li>
+<li>Wrong rating for <code>tweet_id</code> 682962037429899265: 7/11 instead of 10/10.</li>
+<li>Wrong rating for <code>tweet_id</code> 666287406224695296: 1/2 instead of 9/10.</li>
+<li>Wrong variable types for columns <code>timestamp, tweet_id, in_reply_to_status_id, in_reply_to_user_id, timestamp, retweeted_status_id, and retweeted_status_user_id</code>.</li>
 <li>In columns <code>doggo</code>, <code>floofer</code>, <code>pupper</code> and <code>puppo</code>, values 'None' instead of nulls.</li>
 </ul>
 <h5 id="image_predictions-table"><em>image_predictions</em> table<a class="anchor-link" href="#image_predictions-table">&#182;</a></h5><ul>
@@ -11819,8 +11823,8 @@ div#notebook {
 <h1 id="Cleaning">Cleaning<a class="anchor-link" href="#Cleaning">&#182;</a></h1><p>After creating copies for the three dataframes I started with the tidyness issues. First thing was to inner merge the data from <code>social_data_clean</code> to <code>twitter_archive_clean</code>.</p>
 <p>Then I used the function <code>wide_to_long</code> to address the tidyness issue for <code>image_predictions_clean</code>. Although, first I had to change the headers, so I took the chance and wrote more descriptive ones. Then, in order to pass this data onto the <code>twitter_archive_clean</code> I began by filtering with only dogs predictions. After that, I filtered only the best image prediction, by grouping for each <code>tweet_id</code> the lowest <code>prediction_number</code> (highest confidence). Only then I inner merge this onto <code>twitter_archive_clean</code>.</p>
 <p>To deal with the issue of four variables instead of one in <code>twitter_archive_enhanced</code>, I created a pivot dataframe called <code>twitter_archive_clean_dog_stages</code> only with the relevant columns. Over this dataframe I melt and fitered the data, and then left merged the new column <code>dog_stage</code> onto <code>twitter_archive_clean</code>.</p>
-<p>In regards to quality, the multiple dog stages was by far the more tedius issue. The only way was to looking at the picture and decide wheter was a doggo, puppo or both, for example.</p>
-<p>Then I got rid of the retweets and tweets with no image by dropping the rows with some value in the column <code>retweeted_status_id</code> and the rows with a null in the column <code>expanded_urls</code>. Finally I changed the type of the column <code>timestamp</code> to 'datetime'.</p>
+<p>In regards to quality, the multiple dog stages was by far the more tedius issue. The only way was to looking at the picture and decide wheter was a doggo, puppo or both, for example. Then I got rid of the retweets and tweets with no image by dropping the rows with some value in the column <code>retweeted_status_id</code> and the rows with a null in the column <code>expanded_urls</code>.</p>
+<p>Extracting from <code>text</code> with regex, calculated again the <code>rating_numerator</code>, as it was not including fractions. Also fixed some cases where it was taking other ratios in the text. Finally I changed the data type of the columns <code>timestamp</code> to 'datetime' and <code>tweet_id</code>, <code>in_reply_to_status_id</code> and <code>in_reply_to_user_id</code> to 'object'.</p>
 
 </div>
 </div>
